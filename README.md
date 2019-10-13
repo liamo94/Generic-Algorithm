@@ -1,6 +1,9 @@
 # Generic-Algorithm
 Generic Algorithm written in numerous coding languages:
 
+Pseudocode:
+
+
 These are currently: </br>
   __DONE__
   * C++
@@ -10,7 +13,7 @@ These are currently: </br>
   * Ruby
   * Perl
   * PHP
-  * Python
+  * Python </br>
 __ONGOING__
    * C
    * Typescript
