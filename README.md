@@ -1,5 +1,5 @@
 # Generic-Algorithm
-Generic Algorithm written in numerous coding languages:
+Generic Algorithm (evolution) written in numerous coding languages:
 
 Pseudocode:
 ```
@@ -13,8 +13,7 @@ WHILE string not made
 RETURN NUMBER OF STEPS
 ```
 
-
-These are currently:
+The code is written in the following languages:
 
   __DONE__
   * C++
@@ -25,9 +24,12 @@ These are currently:
   * Perl
   * PHP
   * Python
+  * Typescript
   
 __ONGOING__
    * C
-   * Typescript
    * Swift
+   * Go
+   * Kotlin
   
+This project was a challenge I set myself to write the same piece of code over as many languages as possible to see the differences. The code uses arrays, ints, strings, while loops, for loops, conditional logic and objects so I believe it was a great comparison of a small subsets of some of the features the languages have to offer. This was not to showcase best practices or the optimal solution for all languages, but rather enforce the idea that all modern languages follow similar flows.
