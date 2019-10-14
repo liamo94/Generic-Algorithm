@@ -9,14 +9,11 @@ $iteration = 0
 $helloWorld = [72, 101, 108, 108, 111, 44, 32, 87, 111, 114, 108, 100, 33]
 $helloWorldSize = $helloWorld.length
 
-=begin
-    Chromosome object
-=end
 class Chromosome
     # Chromosome object
-    def initialize()
-        @score = 0
-        @string = ""
+    def initialize(string, score)
+        @string = string
+        @score = score
     end
 
     def setScore=(score)
@@ -34,25 +31,13 @@ class Chromosome
     end
 end
 
-<<-DOC
-    Creates the initial array of chromosomes
-
-    @return void
-DOC
 def fillArray()
     for i in 0..$POP_SIZE - 1
-        chrome = Chromosome.new()
-        chrome.setString = createString()
-        chrome.setScore = calculateFitness(chrome)
-        $chromosomes.push(chrome)
+        string = createString()
+        $chromosomes.push(Chromosome.new(string, calculateFitness(string)))
     end
 end
 
-<<-DOC
-    Creates a random string 13 characters long
-
-    @return {Array <String>} characters (chromosome string)
-DOC
 def createString()
     string = []
     for i in 0..12
@@ -63,28 +48,15 @@ def createString()
     return string
 end
 
-<<-DOC
-    Takes in a character array and calculates how far away it is from
-    the target string
-
-    @param {Chromosome} chrome
-
-    @return {int} score
-DOC
-def calculateFitness(chrome)
+def calculateFitness(string)
     score = 0
-    for i in 0..chrome.getString.length - 1
-        difference = (chrome.getString[i].ord - $helloWorld[i]).abs
+    for i in 0..string.length - 1
+        difference = (string[i].ord - $helloWorld[i]).abs
         score += difference
     end
     return score
 end
 
-<<-DOC
-    Checks each Chromosome to see if it matches the correct solution
-
-    @return boolean
-DOC
 def checkSolution()
     for i in 0..$POP_SIZE - 1
         if $chromosomes[i].getScore == 0
@@ -94,12 +66,6 @@ def checkSolution()
     return false
 end
 
-<<-DOC
-    Find the closest string to the goal from the initial population
-    of chromosomes
-
-    @return void
-DOC
 def setStartState()
     for i in 0..$POP_SIZE -1
         score = $chromosomes[i].getScore
@@ -110,14 +76,6 @@ def setStartState()
     end
 end
 
-<<-DOC
-    Crosses over 2 strings
-
-    @param {String} parent1
-    @param {String} parent1
-
-    @return void
-DOC
 def crossOver(parent1, parent2)
     rand = Random.rand(0..parent1.length)
     child1 = ''
@@ -131,24 +89,10 @@ def crossOver(parent1, parent2)
             child2 = child2 + parent1[i]
         end
     end
-    ch1 = Chromosome.new()
-    ch2 = Chromosome.new()
-    ch1.setString = child1.chars
-    ch1.setScore = calculateFitness(ch1)
-    $newChromosomes.push(ch1)
-    ch2.setString = child2.chars
-    ch2.setScore = calculateFitness(ch2)
-    $newChromosomes.push(ch2)
+    $newChromosomes.push(Chromosome.new(child1.chars, calculateFitness(child1.chars)))
+    $newChromosomes.push(Chromosome.new(child2.chars, calculateFitness(child2.chars)))
 end
 
-<<-DOC
-    Takes in an array of 4 chromosomes and return the chromosome
-    with the highest fitness score
-
-    @param {Array <Chromosomes>} randomFour
-
-    @return {Chromosome}
-DOC
 def fitnessFunction(randomFour)
     fitnessScore = 0
     winnerPosition = 0
@@ -161,14 +105,6 @@ def fitnessFunction(randomFour)
     return randomFour[winnerPosition]
 end
 
-<<-DOC
-    This function creates a new population based on the previous.
-    It will take 4 random chromosomes from the population and pick the
-    best 2. 70% of them will be added straight into the new population,
-    with the further 30% crossed over.
-
-    @return void
-DOC
 def createNewPopulation()
     randomFour1 = []
     randomFour2 = []
@@ -184,31 +120,17 @@ def createNewPopulation()
     parent1 = fitnessFunction(randomFour1).getString
     parent2 = fitnessFunction(randomFour2).getString
 
-    n = Random.rand(1..100)
-    if (n < 70)
+    if (Random.rand(1..100) < 70)
         crossOver(parent1, parent2)
     else
-        ch1 = Chromosome.new()
-        ch2 = Chromosome.new()
-        ch1.setString = parent1
-        ch1.setScore = calculateFitness(ch1)
-        $newChromosomes.push(ch1)
-        ch2.setString = parent2
-        ch2.setScore = calculateFitness(ch2)
-        $newChromosomes.push(ch2)
+        $newChromosomes.push(Chromosome.new(parent1, calculateFitness(parent1)))
+        $newChromosomes.push(Chromosome.new(parent2, calculateFitness(parent2)))
     end
 end
 
-<<-DOC
-    This function will loop through the array of chromosomes, and give
-    them a 5% chance of mutating (that is one letter will change by 1)
-
-    @return void
-DOC
 def mutate()
     for i in 0..$POP_SIZE-1
-        n = Random.rand(1..100)
-        if (n < 5)
+        if (Random.rand(1..100) < 5)
             stringToMutate = $chromosomes[i].getString
             answer = Random.rand(0..(stringToMutate.length - 1))
             fiftyFifty = Random.rand(0..1)
@@ -230,11 +152,6 @@ def mutate()
     end
 end
 
-<<-DOC
-    Main method to run the program
-
-    @return void
-DOC
 def main()
     fillArray()
     setStartState()

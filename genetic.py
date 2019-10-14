@@ -12,15 +12,12 @@ startHighest = 0
 startHighestString = ""
 iteration = 0
 
-'''
-    The Chromosome object
-'''
 class Chromosome:
     'Chromosome class'
 
-    def __init__(self):
-        self.score = 0
-        self.string = ""
+    def __init__(self, string, score):
+        self.string = string
+        self.score = score
 
     def setScore(self, score):
         self.score = score
@@ -28,11 +25,6 @@ class Chromosome:
     def setName(self, string):
         self.string = string
 
-'''
-    Creates a random string
-
-    @return: {Array <String>} characters (chromosome string)
-'''
 def createString():
     string = []
     for i in range(0, 13):
@@ -40,103 +32,47 @@ def createString():
         string.append(chr(letter))
     return string
 
-'''
-    Creates the initial array of chromosomes
-
-    @return void
-'''
 def fillArray():
     for i in range(0, POP_SIZE):
-        chrome = Chromosome()
-        chrome.setName(createString())
-        chrome.setScore(calculateFitness(chrome))
-        chromosomes.append(chrome)
+        string = createString()
+        chromosomes.append(Chromosome(string, calculateFitness(string)))
+        score = calculateFitness(string)
+        global startHighest
+        global startHighestString
+        if (i == 0 or score < startHighest):
+            startHighest = score
+            startHighestString = chromosomes[i].string
     return
 
-'''
-    Takes in a character array and calculates how far away it is from
-    the target string
-
-    @param {Chromosome} chrome
-
-    @return {int} score
-'''
-def calculateFitness(chrome):
+def calculateFitness(string):
     score = 0
-    for i in range(0, len(chrome.string)):
-        difference = abs(ord(chrome.string[i]) - helloWorld[i])
+    for i in range(0, len(string)):
+        difference = abs(ord(string[i]) - helloWorld[i])
         score += difference
     return score
 
-'''
-    Checks each Chromosome to see if it matches the correct solution
-
-    @return boolean
-'''
 def checkSolution():
     for i in range(0, POP_SIZE):
         if chromosomes[i].score == 0:
             return True
     return False
 
-'''
-    Find the closest string to the goal from the initial population
-    of chromosomes
-
-    @return void
-'''
-def setStartState():
-    for i in range(0, POP_SIZE):
-        score = chromosomes[i].score
-        global startHighest
-        global startHighestString
-        if ((i == 0) or (score < startHighest)):
-            startHighest = score
-            startHighestString = chromosomes[i].string
-    return
-
 def constructString(strArr):
     return ''.join(strArr)
 
 
-'''
-    Crosses over 2 strings
-
-    @param {String} parent1
-    @param {String} parent2
-
-    @return: void
-'''
 def crossOver(parent1, parent2):
     rand = random.randint(0, len(parent1))
     child1 = ''
     child2 = ''
     for i in range(0, len(parent1)):
-        if i >= rand:
-            child1 = child1 + parent1[i]
-            child2 = child2 + parent2[i]
-        else:
-            child1 = child1 + parent2[i]
-            child2 = child2 + parent1[i]
+        child1 += parent1[i] if i >= rand else parent2[i]
+        child2 += parent2[i] if i >= rand else parent1[i]
 
-    ch1 = Chromosome()
-    ch2 = Chromosome()
-    ch1.setName(list(child1))
-    ch1.setScore(calculateFitness(ch1))
-    newChromosomes.append(ch1)
-    ch2.setName(list(child2))
-    ch2.setScore(calculateFitness(ch2))
-    newChromosomes.append(ch2)
+    newChromosomes.append(Chromosome(list(child1), calculateFitness(list(child1))))
+    newChromosomes.append(Chromosome(list(child2), calculateFitness(list(child2))))
     return
 
-'''
-    Takes in an array of 4 chromosomes and returns the chromosome
-    with the highest fitness score
-
-    @param {Array <Chromosomes>} randomFour
-
-    @return {Chromosome}
-'''
 def fitnessFunction(randomFour):
     fitnessScore = 0
     winnerPosition = 0
@@ -146,14 +82,6 @@ def fitnessFunction(randomFour):
             fitnessScore = randomFour[i].score
     return randomFour[winnerPosition]
 
-'''
-    This function creates a new population based on the previous.
-    It will take 4 random chromosomes from the population and pick the
-    best 2. 70% of them will be added straight into the new population,
-    with the further 30% crossed over.
-
-    @return void
-'''
 def createNewPopulation():
     randomFour1 = []
     randomFour2 = []
@@ -166,35 +94,20 @@ def createNewPopulation():
     
     parent1 = fitnessFunction(randomFour1).string
     parent2 = fitnessFunction(randomFour2).string
-    n = random.randint(1,100)
-    if (n < 70):
+    if (random.randint(1,100) < 70):
         crossOver(parent1, parent2)
     else:
-        ch1 = Chromosome()
-        ch2 = Chromosome()
-        ch1.setName(parent1)
-        ch1.setScore(calculateFitness(ch1))
-        newChromosomes.append(ch1)
-        ch2.setName(parent2)
-        ch2.setScore(calculateFitness(ch2))
-        newChromosomes.append(ch2)
+        newChromosomes.append(Chromosome(parent1, calculateFitness(parent1)))
+        newChromosomes.append(Chromosome(parent2, calculateFitness(parent2)))
     
     return
 
-'''
-    This function will loop through the array of chromosomes, and give
-    them a 5% chance of mutating (that is one letter will change by 1)
-
-    @return void
-'''
 def mutate():
     for i in range(0, len(chromosomes)):
-        n = random.randint(1, 100)
-        if (n < 5):
+        if (random.randint(1, 100) < 5):
             stringToMutate = chromosomes[i].string
             answer = random.randint(0, len(stringToMutate) - 1)
             fiftyFifty = random.randint(0, 1)
-            #print(answer, ' ', len(chromosomes[i].string))
             chromosomeChar = chromosomes[i].string[answer]
             value = ord(chromosomeChar)
             if (value == low):
@@ -210,17 +123,11 @@ def mutate():
             chromosomes[i].string[answer] = chr(value)
     return
 
-'''
-    Main method to run the program
-
-    @return void
-'''
 def main():
     global chromosomes
     global newChromosomes
     global iteration
     fillArray()
-    setStartState()
     while(not checkSolution()):
         for i in range (0, POP_SIZE):
             createNewPopulation()
@@ -234,10 +141,12 @@ def main():
         if(not checkSolution()):
             chromosomes = newChromosomes[:]
             mutate()
-            print(iteration, ". Best =" , highestString , "," , currentHighest , "off target")
+            print iteration , ". " , "Best = " , highestString,", (" , currentHighest , " off target)"
             newChromosomes = []
             iteration += 1
     print('Hello, World has been made')
-    print('Start string was ', constructString(startHighestString), ' (', startHighest, ' away from target)')
+    print'Start string was ' + constructString(startHighestString) + ' (', startHighest, ' away from target)'
+    return
 
 main()
+

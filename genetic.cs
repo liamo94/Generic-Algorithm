@@ -17,9 +17,8 @@ namespace GeneticAlgorithm {
 
         public static void Main(string[] args) {
             fillArray();
-            setStartState();
 			int iteration = 0;
-            while (!checkSolution()){
+            while (!checkSolution()) {
                 for (int i = 0; i < POP_SIZE / 2; i++) {
                 	createNewPopulation();
                 }
@@ -50,12 +49,17 @@ namespace GeneticAlgorithm {
          * @return void
          */
         private static void fillArray() {
+            int score = 0;
+            string chString;
             for (int i = 0; i < POP_SIZE; i++) {
-                Chromosome chromosome = new Chromosome();
-                chromosome.setString(makeString());
-                chromosome.setScore(calculateFitness(chromosome));
-                Console.WriteLine(chromosome.getScore());
+                chString = makeString();
+                Chromosome chromosome = new Chromosome(chString, calculateFitness(chString));
                 population.Add(chromosome);
+                score = (population[i].getScore());
+                if (i == 0 || score < startHighest) {
+                    startHighest = score;
+                    startHighestString = population[i].getString();
+                }
             }
         }
         private static string makeString() {
@@ -68,11 +72,10 @@ namespace GeneticAlgorithm {
             return chString;
         }
 
-        private static int calculateFitness(Chromosome chromosome) {
+        private static int calculateFitness(string chString) {
             int score = 0;
-            string check = chromosome.getString();
-            char[] stringToCheck = check.ToCharArray();
-            for (int i = 0; i < check.Length; i++){
+            char[] stringToCheck = chString.ToCharArray();
+            for (int i = 0; i < chString.Length; i++){
                 score += Math.Abs((int)stringToCheck[i] - helloWorld[i]);
             }
             return score;
@@ -87,16 +90,6 @@ namespace GeneticAlgorithm {
             return false;
         }
 
-        private static void setStartState() {
-            for (int i = 0; i < POP_SIZE; i++) {
-                int score = population[i].getScore();
-                if (i == 0 || score < startHighest) {
-                    startHighest = score;
-                    startHighestString = population[i].getString();
-                }
-            }
-        }
-
         private static void crossOver(string parent1, string parent2) {
             int position = random.Next(parent1.Length);
             char[] child1Chars = parent1.ToCharArray();
@@ -105,21 +98,13 @@ namespace GeneticAlgorithm {
             string child2 = "";
 
             for (int i = 0; i < parent1.Length; i++) {
-                if (i >= position) {
-                    child1 += child1Chars[i];
-                    child2 += child2Chars[i];
-                } else {
-                    child1 += child2Chars[i];
-                    child2 += child1Chars[i];
-                }
+                child1 += i >= position ? child1Chars[i] : child2Chars[i];
+                child2 += i >= position ? child2Chars[i] : child1Chars[i];
             }
-            Chromosome ch1 = new Chromosome();
-            Chromosome ch2 = new Chromosome();
-            ch1.setString(child1);
-            ch1.setScore(calculateFitness(ch1));
+
+            Chromosome ch1 = new Chromosome(child1, calculateFitness(child1));
+            Chromosome ch2 = new Chromosome(child2, calculateFitness(child2));
             newPopulation.Add(ch1);
-            ch2.setString(child2);
-            ch2.setScore(calculateFitness(ch2));
             newPopulation.Add(ch2);
         }
 
@@ -128,9 +113,9 @@ namespace GeneticAlgorithm {
             int winnerPosition = 0;
 
             for (int i = 0; i < randomFour.Count; i++) {
-                if (i == 0 || calculateFitness(randomFour[i]) < fitnessScore) {
+                if (i == 0 || randomFour[i].getScore() < fitnessScore) {
                     winnerPosition = i;
-                    fitnessScore = calculateFitness(randomFour[i]);
+                    fitnessScore = randomFour[i].getScore();
                 }
             }
             return randomFour[winnerPosition];
@@ -146,28 +131,21 @@ namespace GeneticAlgorithm {
             string parent1 = fitnessFunction(randomFour1).getString();
             string parent2 = fitnessFunction(randomFour2).getString();
 
-            int n = random.Next(1, 100);
-            if (n < 70) {
+            if (random.Next(1, 100) < 70) {
                 crossOver(parent1, parent2);
             } else {
-                Chromosome ch1 = new Chromosome();
-                Chromosome ch2 = new Chromosome();
-                ch1.setString(parent1);
-                ch1.setScore(calculateFitness(ch1));
+                Chromosome ch1 = new Chromosome(parent1, calculateFitness(parent1));
+                Chromosome ch2 = new Chromosome(parent2, calculateFitness(parent2));
                 newPopulation.Add(ch1);
-                ch2.setString(parent2);
-                ch2.setScore(calculateFitness(ch2));
                 newPopulation.Add(ch2);
             }
         }
 
         private static void mutate() {
             for (int i = 0; i < POP_SIZE; i++) {
-                int n = random.Next(1, 100);
-                if (n < 5) {
+                if (random.Next(1, 100) < 5) {
                     string stringToMutate = population[i].getString();
                     int answer = random.Next(stringToMutate.Length);
-                    int fiftyFifty = random.Next(2);
                     char[] wordChar = stringToMutate.ToCharArray();
                     int changedCharacter = 0;
                     if((int)wordChar[answer] == low) {
@@ -175,11 +153,7 @@ namespace GeneticAlgorithm {
                     } else if ((int)wordChar[answer] == high) {
                         changedCharacter = (int)wordChar[answer] - 1;
                     } else {
-                        if (fiftyFifty == 0) {
-                            changedCharacter = (int)wordChar[answer] + 1;
-                        } else {
-                            changedCharacter = (int)wordChar[answer] - 1;
-                        }
+                        changedCharacter = random.Next(2) == 0 ? (int)wordChar[answer] + 1 : (int)wordChar[answer] - 1;
                     }
                     wordChar[answer] = (char)changedCharacter;
                     string mutatedString = "";
@@ -187,7 +161,7 @@ namespace GeneticAlgorithm {
                         mutatedString = mutatedString + wordChar[j];
                     }
                     population[i].setString(mutatedString);
-                    population[i].setScore(calculateFitness(population[i]));
+                    population[i].setScore(calculateFitness(population[i].getString()));
                 }
             }
         }
@@ -197,7 +171,10 @@ namespace GeneticAlgorithm {
     class Chromosome {
         private string chString = "";
         private int score = 0;
-        public Chromosome() {}
+        public Chromosome(string chString, int score) {
+            this.chString = chString;
+            this.score = score;
+        }
 
 
         public string getString() {

@@ -13,16 +13,10 @@ const int helloWorld[] = {72, 101, 108, 108, 111, 44, 32, 87, 111, 114, 108, 100
 const int helloWorldSize = sizeof(helloWorld)/sizeof(*helloWorld);
 char randomString[helloWorldSize];
 int someValues[helloWorldSize];
-std::clock_t    start;
 
 int startHighest = 0;
 char startHighestString[helloWorldSize];
 
-/**
- * 
- * Chromosome class
- * 
- * */
 class Chromosome {
     public:
         int score;
@@ -45,14 +39,10 @@ void Chromosome::setString( char chString [] ) {
     }
 }
 
-/*
-    Uses Mersenne Twister PRNG ( pseudorandom number generator) to generate a random number.
-    Generating a random number in C is a bitch.
-*/
 int getRandom(int low, int high) {
     std::random_device _rand;
     std::mt19937 randomValue(_rand());
-    std::uniform_int_distribution<> createRandom(low, high);    
+    std::uniform_int_distribution<> createRandom(low, high);
     return createRandom(randomValue);
 }
 
@@ -64,9 +54,6 @@ void createString() {
     }
 }
 
-/*
-    Pass chromosome by reference to modify score
-*/
 int calculateFitness(Chromosome chrome) {
     int score = 0;
     for(int i = 0; i < helloWorldSize; i++) {
@@ -78,7 +65,6 @@ int calculateFitness(Chromosome chrome) {
 }
 
 void setStartState() {
-    start = std::clock();
     for(int i = 0; i < POP_SIZE; i++){
         int score = chromosomes[i].score;
         if((i == 0) || (score < startHighest)) {
@@ -88,15 +74,10 @@ void setStartState() {
             }
         }
     }
-    std::cout << "start state Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
 }
 
-/*
-    Create an array of random chromosomes to begin with.
-*/
 void fillArray() {
     for(int i = 0; i < POP_SIZE; i++) {
-        //char test[] = "a a a a a";
         createString();
         Chromosome chr;
         chr.setString(randomString);
@@ -105,9 +86,6 @@ void fillArray() {
     }
 }
 
-/*
-    Check if a chromosome is the solution
-*/
 bool checkSolution() {
     for(int i = 0; i < POP_SIZE; i++) {
         if(chromosomes[i].score == 0) {
@@ -118,7 +96,6 @@ bool checkSolution() {
 }
 
 Chromosome fitnessFunction(Chromosome randomFour [], int size) {
-    start = std::clock();
     int fitnessScore = 0;
     int winnerPosition = 0;
     for (int i = 0; i < size; i++) { 
@@ -127,13 +104,11 @@ Chromosome fitnessFunction(Chromosome randomFour [], int size) {
             fitnessScore = randomFour[i].score;
         }
     }
-   // std::cout << "fitness start Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
     return randomFour[winnerPosition];
 }
 
-void crossOver ( char parent1 [], char parent2 []) {
-    start = std::clock();
-    int rand = getRandom(0, helloWorldSize-1);
+void crossOver ( char parent1 [helloWorldSize], char parent2 [helloWorldSize]) {
+    int rand = getRandom(0, helloWorldSize);
     char child1 [helloWorldSize];
     char child2 [helloWorldSize];
 
@@ -157,11 +132,10 @@ void crossOver ( char parent1 [], char parent2 []) {
     ch2.setScore(calculateFitness(ch2));
     newChromosomes[chromosomeSize] = ch2;
     chromosomeSize++;
-   // std::cout << "crossover state Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
+
 }
 
 void createNewPopulation() {
-    start = std::clock();    
     Chromosome randomFour1 [4];
     Chromosome randomFour2 [4];
     int randomValue = 0;
@@ -197,49 +171,45 @@ void createNewPopulation() {
         ch2.setScore(calculateFitness(ch2));
         newChromosomes[chromosomeSize] = ch2;
         chromosomeSize++;
-        //std::cout << "new pop start Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
 
-        // delete [] randomFour1;
-        // delete [] randomFour2;
     }
 }
 
-void mutate(int i) {
-    start = std::clock();    
-    char stringToMuatate[helloWorldSize];
-    for (int j = 0; j < helloWorldSize; j++){
-        stringToMuatate[j] = chromosomes[i].string[j];
-    }
-    int answer = getRandom(0, helloWorldSize-1);
-    int fiftyFifty = getRandom(0, 1);
-    char chromosomeString = stringToMuatate[answer];
-    int changedCharacter = 0;
-    int value = chromosomeString;
-    if (value == LOW) {
-        value += 1;
-    } else if (value == HIGH) {
-        value -= 1;
-    }
-    else {
-        if (fiftyFifty == 0) {
-            value += 1;
-        } else {
-            value -= 1;
+void mutate() {
+    for (int i = 0; i < POP_SIZE; i++) {
+        int n = getRandom(1, 100);
+        if (n < 5){
+            char stringToMuatate[helloWorldSize];
+            for (int j = 0; j < helloWorldSize; j++){
+                stringToMuatate[j] = chromosomes[i].string[j];
+            }
+            int answer = getRandom(0, helloWorldSize-1);
+            int fiftyFifty = getRandom(0, 1);
+            char chromosomeString = stringToMuatate[answer];
+            int changedCharacter = 0;
+            int value = chromosomeString;
+            if (value == HIGH) {
+                value += 1;
+            } else if (value == LOW) {
+                value -= 1;
+            }
+            else {
+                if (fiftyFifty == 0) {
+                    value += 1;
+                } else {
+                    value -= 1;
+                }
+            }
+            char newValue = value;
+            chromosomes[i].string[answer] = newValue;
         }
     }
-    char newValue = value;
-    chromosomes[i].string[answer] = newValue;
-            
-    //std::cout << "mutate start Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;    
 }
 
 int main() {
     int iteration = 0;
     fillArray();
     setStartState();
-    // for(int i = 0; i < POP_SIZE; i++) {
-    //     std::cout << chromosomes[i].string <<std::endl;
-    // }
     while (!checkSolution()) {
         for(int i = 0; i < POP_SIZE/2; i++){
             createNewPopulation();
@@ -257,17 +227,13 @@ int main() {
             highestString[helloWorldSize] = '\0';  
 
         }
-        if (!checkSolution()) { 
+        if (!checkSolution()) {
             for(int i = 0; i < POP_SIZE; i++){
                 chromosomes[i] = newChromosomes[i];
-                int n = getRandom(1, 100);
-                if (n < 5){
-                    mutate(i);
-                }
             }
+            mutate();
             chromosomeSize = 0;
             iteration ++;
-            //std::cout << "restart start Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;    
             std::cout << iteration << ". Best = " << highestString << " (" << currentHighest << " away from target)" << std::endl;
         }
         

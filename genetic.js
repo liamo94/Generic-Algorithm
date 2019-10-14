@@ -1,7 +1,7 @@
 //high, low - the range of decimal ASCII codes for characters
 let low =32;
 let high = 126;
-let POP_SIZE = 100;
+let POP_SIZE = 100000;
 let chromosomes= [];
 let newChromosomes = [];
 let startHighest = 0;
@@ -11,113 +11,82 @@ let iteration = 0;
 // Hello, World!
 let helloWorld = [72, 101, 108, 108, 111, 44, 32, 87, 111, 114, 108, 100, 33];
 
-/**
- * Chromosome object
- */
-function Chromosome() {
-    this.score = 0;
-    this.string = [];
+function Chromosome(string, score) {
+    this.string = string;
+    this.score = score;
 
-    this.setScore = function(score) {
-        this.score = score;
+    this.getString = function() {
+        return this.string;
     }
-    this.setName = function(string) {
-        this.string = string;
+
+    this.getScore = function() {
+        return this.score;
+    }
+
+    this.setCharacter = function(index, character) {
+        this.string[index] = character;
     }
 }
 
-/**
- * Main method
- * 
- * @return void
- */
 function main() {
     fillArray();
-    setStartState();
-    while(!checkSolution()) {
+    while (!checkSolution()) {
         for (let i = 0; i < POP_SIZE; i++) {
             createNewPopulation();
         }
         let currentHighest = 0;
         let highestString = '';
         for (let i = 0; i < POP_SIZE; i++) {
-            let score = chromosomes[i].score;
-            if ((i == 0) || (score < currentHighest)) {
+            let score = chromosomes[i].getScore();
+            if (i == 0 || score < currentHighest) {
                 currentHighest = score;
-                highestString = chromosomes[i].string.join('');
+                highestString = chromosomes[i].getString().join('');
             }
         }
         if (!checkSolution()) {
             chromosomes = newChromosomes.slice();
             mutate();
-            console.log(iteration + ". " + "Best = " + highestString + ", " + currentHighest + " off target");
+            console.log(`${iteration}. Best = ${highestString}, ${currentHighest} off target`)
     
             newChromosomes = [];
             iteration++;
         }
     }
-    console.log('Hello, World! has been made');
-    console.log(`Start string was ${startHighestString.join('')} (${startHighest} away from target)`);
+    console.log('\nHello, World! has been made');
+    console.log(`Start string was ${startHighestString.join('')} (${startHighest} away from target)\n`);
 }
 
-/**
- * Run the application
- */
 main();
 
-/**
- * Creates a random String 13 characters long
- * 
- * @returns {Array} chromosomes string (char array)
- */
 function createString() {
     let string = [];
     for (let i = 0; i < 13; i++) {
-        let letter = random(low, high++);
-        string.push(String.fromCharCode(letter));
+        string.push(String.fromCharCode(random(low, high)));
    }
    return string;
 }
 
-/**
- * 
- * Fills the chromosome array with chromsomes
- * 
- * @returns void
- */
 function fillArray() {
+    let string, score;
     for (let i = 0; i < POP_SIZE; i++) {
-        let chr = new Chromosome();
-        chr.setName(createString());
-        chr.setScore(calculateFitness(chr));
-        chromosomes.push(chr);
+        string = createString();
+        chromosomes.push(new Chromosome(string, calculateFitness(string)));
+        score = calculateFitness(string);
+        if (i == 0 || score < startHighest) {
+            startHighest = score;
+            startHighestString = chromosomes[i].getString();
+        }
     }
 }
 
-/**
- * Takes in a character array and calculates how far away it is from the 
- * target String
- * 
- * @param {Array} characters
- * 
- * @returns {Int} the chrosmones score 
- */
-function calculateFitness(chr) {
+function calculateFitness(string) {
     let score = 0;
-    for (let i = 0; i < chr.string.length; i++) {
-        let difference =  Math.abs(chr.string[i].charCodeAt(0) - helloWorld[i]);
-        score += difference;
+    for (let i = 0; i < string.length; i++) {
+        score += Math.abs(string[i].charCodeAt(0) - helloWorld[i]);
     }
     return score;
 }
 
-/**
- * Constructs a String out of a character array
- * 
- * @param {Array} arr 
- * 
- * @return {String}
- */
 function constructString(arr) {
     let string = '';
     arr.forEach(char => {
@@ -126,159 +95,80 @@ function constructString(arr) {
     return string;
 }
 
-/**
- * Checks each Chromosome to see if it matches the correct solution
- * 
- * @return boolean
- */
 function checkSolution() {
     for (let i =0; i < POP_SIZE; i++) {
-        if (chromosomes[i].score == 0) {
+        if (chromosomes[i].getScore() == 0) {
             return true;
         }
     }
     return false;
 }
 
-/**
- * Find the closest string to the goal from the initial
- * population of chromosomes
- * 
- * @returns void
- */
-function setStartState() {
-    for (let i = 0; i < POP_SIZE; i++) {
-        let score = chromosomes[i].score;
-        if ((i == 0) ||(score < startHighest)) {
-            startHighest = score;
-            startHighestString = chromosomes[i].string;
-        }
-    }
-}
-
-/**
- * Takes in two parent strings and and crosses them over, 
- * adding them to the new chromosomes array.
- * 
- * @param {Array} parent1 - char array
- * @param {Array} parent2 - char array
- */
 function crossOver(parent1, parent2) {
     let rand = random(parent1.length);
     let child1 = '';
     let child2 = '';
-    // Create child 1
+
     for (let i = 0; i < parent1.length; i++) {
-        if (i >= rand){
-            child1 = child1 + parent1[i];
-            child2 = child2 + parent2[i];
-        }
-        else {
-            child1 = child1 + parent2[i];
-            child2 = child2 + parent1[i];
-        }
+        child1 += i >= rand ? parent1[i] : parent2[i];
+        child2 += i >= rand ? parent2[i] : parent1[i];
     }
-    let ch1 = new Chromosome();
-    let ch2 = new Chromosome();
-    ch1.setName(child1.split(''));
-    ch1.setScore(calculateFitness(ch1));
-    newChromosomes.push(ch1);
-    ch2.setName(child2.split(''));
-    ch2.setScore(calculateFitness(ch2));
-    newChromosomes.push(ch2);
+
+    newChromosomes.push(new Chromosome(child1.split(''), calculateFitness(child1.split(''))));
+    newChromosomes.push(new Chromosome(child2.split(''), calculateFitness(child2.split(''))));
 }
 
-/**
- * Function to create a new population based on the previous.
- * It will take 4 random chromosomes from the popualtion and pick
- * the best 2. 70% of them will be added straight into the new population,
- * with the further 30% crossed over.
- * 
- * @returns void
- */
 function createNewPopulation() {
     let randomFour1 = [];
     let randomFour2 = [];
 
-    // create random 4 population
     for (let i = 0; i < 4; i++) {
         randomFour1.push(random(chromosomes));
         randomFour2.push(random(chromosomes));
     }
 
-    let parent1 = fitnessFunction(randomFour1).string;
-    let parent2 = fitnessFunction(randomFour2).string;
+    let parent1 = fitnessFunction(randomFour1).getString();
+    let parent2 = fitnessFunction(randomFour2).getString();
     let n = random(1, 100);
     if (n < 70) {
         crossOver(parent1, parent2);
     } else {
-        let ch1 = new Chromosome();
-        let ch2 = new Chromosome();
-        ch1.setName(parent1);
-        ch1.setScore(calculateFitness(ch1));
-        newChromosomes.push(ch1);
-        ch2.setName(parent2);
-        ch2.setScore(calculateFitness(ch2));
-        newChromosomes.push(ch2);
+        newChromosomes.push(new Chromosome(parent1, calculateFitness(parent1)));
+        newChromosomes.push(new Chromosome(parent2, calculateFitness(parent2)));
     }
 }
 
-/**
- * Takes in 4 random strings and returns the string
- * with the highest fitness score.
- * 
- * @param {Array} randomFour [Strings]
- * 
- * @returns {String} highest scored string
- */
 function fitnessFunction(randomFour) {
     let fitnessScore = 0;
     let winnerPosition = 0;
     for (let i = 0; i < randomFour.length; i++) {
-        if ((i == 0) || (randomFour[i].score < fitnessScore)) {
+        if (i == 0 || randomFour[i].score < fitnessScore) {
             winnerPosition = i;
-            fitnessScore = randomFour[i].score;
+            fitnessScore = randomFour[i].getScore();
         }
     }
     return randomFour[winnerPosition];
 }
 
-/**
- * This function will loop through the array of chromosomes, and give them
- * a 5% chance of mutating (that is one letter will change by 1)
- * 
- * @returns void
- */
 function mutate() {
     for (let i = 0; i < chromosomes.length; i++) {
-        let n = random(1, 100);
-        if (n < 5) {
-            let StringToMutate = chromosomes[i].string;
+        if (random(1, 100) < 5) {
+            let StringToMutate = chromosomes[i].getString();
             let answer = random(StringToMutate.length);
-            let fiftyFifty = random(2);
-            let chromosomeString = chromosomes[i].string[answer];
-            let changedCharacter = 0;
-            let value = chromosomeString.charCodeAt(0);
-            if (value == low) {
-                value += 1;
-            } else if(value == high) {
-                value -= 1;
+            let chromosomeString = chromosomes[i].getString()[answer];
+            let character = chromosomeString.charCodeAt(0);
+            if (character == low) {
+                character += 1;
+            } else if (character == high) {
+                character -= 1;
             } else {
-                fiftyFifty == 0 ? value += 1 : value-= 1;
+                random(2) == 0 ? character += 1 : character -= 1;
             }
-            chromosomes[i].string[answer] = String.fromCharCode(value);
+            chromosomes[i].setCharacter(answer, String.fromCharCode(character));
         }
     }
 }
 
-/**
- * @method random
- * 
- * @param {Number} [x] || {Array} [x]
- * @param {Number} [y] - optional (If blank, return number between 0 and x)
- * 
- * @return {Number} random number (or {Object} of Array x)
- */
 function random(x, y) {
     if (typeof y === "undefined") {
         if (x instanceof Array) {
@@ -291,4 +181,3 @@ function random(x, y) {
         return Math.floor(Math.random() * (y - x) + x);
     }
 }
-

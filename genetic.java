@@ -1,145 +1,125 @@
+
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
-public class genetic {
+public class ga {
 
-	static int POP_SIZE = 100;
-	static int[] helloWorld = {72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33};
-	static ArrayList<Chromosome> population = new ArrayList<>();
-	static ArrayList<Chromosome> newPopulation = new ArrayList<>();
-	static int startHighest = 0;
-	static String startHighestString = "";
+	private final static int POP_SIZE = 100;
+	private final static int[] helloWorld = {72, 101, 108, 108, 111, 44, 32, 87, 111, 114, 108, 100, 33};
+	private static List<Chromosome> population = new ArrayList<>();
+	private static List<Chromosome> newPopulation = new ArrayList<>();
+	private static int startHighest = 0;
+	private static String startHighestString = "";
 
-	public static void main(String args[]){
-		System.out.println("---------------------------------");
-		System.out.println("|   GENETIC ALGORITHM PROGRAM   |");
-		System.out.println("---------------------------------");
+	public static void main(String args[]) {
 		System.out.println("Trying to make \"Hello World!\" ...\n");
 		fillArray();
-		setStartState();
 		int iteration = 0;
 		
-		while(!checkSolution()){
-			for(int i = 0; i < POP_SIZE; i++){
+		while (!checkSolution()) {
+			for (int i = 0; i < POP_SIZE; i++) {
 				createNewPopulation();
-				//WithoutCrossover.createNewPopulation();
-				//RandomSelection.createNewPopulation();
 			}
 			int currentHighest = 0;
 			String highestString = "";
-			for(int i = 0; i < POP_SIZE; i++){
+			for (int i = 0; i < POP_SIZE; i++) {
 				int score = population.get(i).getScore();
-				if(i == 0){
+				if (i == 0) {
 					currentHighest = score;
 					highestString = population.get(i).getString();
-				}else if(score < currentHighest){
+				} else if (score < currentHighest) {
 					currentHighest = score;
 					highestString = population.get(i).getString();
 				}
 			}
-			if(!checkSolution()){
-				population = (ArrayList<Chromosome>) newPopulation.clone();
+			if (!checkSolution()) {
+				population = clone(newPopulation);
 				mutate();
-				System.out.println(iteration + ". " + "Best = " + highestString + ", " + currentHighest + " off target");
+				System.out.printf("%d. Best = %s, %d off target\n", iteration, highestString, currentHighest);
 				newPopulation.clear();
 				iteration++;
 			}
 
 		}
 		System.out.println("\nHello World! has been made\n");
-		System.out.println("Start string was " + startHighestString + " (" + startHighest + " away from target)");
+		System.out.printf("Start string was %s (%d away from target)\n", startHighestString, startHighest);
 	}
 
-	/**
-	 * Creates an array of chromosomes
-	 * 
-	 * @return void
-	 */
-	private static void fillArray(){
-		for(int i = 0; i < POP_SIZE; i++){
-			Chromosome ch = new Chromosome();
-			ch.makeString();
-			ch.setScore(calculateFitness(ch.getString()));
-			population.add(ch);
+	private static void fillArray() {
+		String word = "";
+		int score = 0;
+		Chromosome chromosome;
+		for (int i = 0; i < POP_SIZE; i++) {
+			word = makeString();
+			chromosome = new Chromosome(word, calculateFitness(word));
+			population.add(chromosome);
+			score = (population.get(i).getScore());
+			if (i == 0 || score < startHighest) {
+				startHighest = score;
+				startHighestString = population.get(i).getString();
+			}
 		}
 	}
+	
+	private static List<Chromosome> clone(List<Chromosome> original) {
+	    List<Chromosome> copy = new ArrayList<>();
+	    copy.addAll(original);
+	    return copy;
+	}
 
-	/**
-	 * Takes in a String and returns its fitness score
-	 * 
-	 * @param String
-	 * @return Integer
-	 */
-	private static int calculateFitness(String check){
+	private static int calculateFitness(String check) {
 		int score = 0;
 		char[] stringToCheck = check.toCharArray();
-		for(int i = 0; i < check.length(); i++){
-			score = score + Math.abs(((int)stringToCheck[i]) - helloWorld[i]);
+		for (int i = 0; i < check.length(); i++) {
+			score += Math.abs(((int) stringToCheck[i]) - helloWorld[i]);
 		}
 		return score;
 	}
 
-	/**
-	 * Checks to see if the target string has been made
-	 * 
-	 * @return boolean
-	 */
-	private static boolean checkSolution(){
-		for(int i = 0; i < population.size(); i++){
-			if(population.get(i).getScore() == 0){
+	private static boolean checkSolution() {
+		for (Chromosome chromsome: population) {
+			if (chromsome.getScore() == 0) {
 				return true;
 			}
 		}
 		return false;
 	}
-
 	
-	/**
-	 * It will pick 2 sets of 4 random strings. It will pick the best string in
-	 * the subset of 4. 70% of the time the 2 strings will be crossed over, with the
-	 * other 30% being added straight to the array
-	 * 
-	 * @return void
-	 */
-	private static void createNewPopulation(){
+	private static String makeString() {
+		String word = "";
+		for (int j = 0; j < 12; j++) {
+			Random rand = new Random();
+			int n = rand.nextInt((122 - 32) + 1) + 32;
+			String s = (Character.toString((char)n));
+			word = word + s;
+		}
+		return word;
+	}
+
+	private static void createNewPopulation() {
 		Random rand = new Random();
 		ArrayList<Chromosome> randomFour1 = new ArrayList<>();
 		ArrayList<Chromosome> randomFour2 = new ArrayList<>();
 
-		//create first random 4
-		for(int i = 0; i < 4; i++){
-			int n = rand.nextInt(POP_SIZE);
-			randomFour1.add(population.get(n));
+		for (int i = 0; i < 4; i++) {
+			randomFour1.add(population.get(rand.nextInt(POP_SIZE)));
+			randomFour2.add(population.get(rand.nextInt(POP_SIZE)));
 		}
-
-		//create second random 4
-		for(int i = 0; i < 4; i++){
-			int n = rand.nextInt(POP_SIZE);
-			randomFour2.add(population.get(n));
-		}
+		
 		String parent1 = fitnessFunction(randomFour1).getString();
 		String parent2 = fitnessFunction(randomFour2).getString();
 
 		int n = rand.nextInt((100 - 1) + 1) + 1;
-		if(n < 70){
+		if (n < 70) {
 			crossOver(parent1, parent2);
-		}else{
-			Chromosome ch1 = new Chromosome();
-			ch1.setString(parent1);
-			ch1.setScore(calculateFitness(parent1));
-			newPopulation.add(ch1);
-			Chromosome ch2 = new Chromosome();
-			ch2.setString(parent2);
-			ch2.setScore(calculateFitness(parent2));
-			newPopulation.add(ch2);
+		} else {
+			newPopulation.add(new Chromosome(parent1, calculateFitness(parent1)));
+			newPopulation.add(new Chromosome(parent2, calculateFitness(parent2)));
 		}
 	}
 
-	/**
-	 * Takes in 2 Strings and will crosses them over, adding the new Strings
-	 * to the population array.
-	 */
-	private static void crossOver(String parent1, String parent2){
+	private static void crossOver(String parent1, String parent2) {
 		Random rand = new Random();
 		int position = rand.nextInt(parent1.length());
 		char[] child1Chars = parent1.toCharArray();
@@ -147,56 +127,29 @@ public class genetic {
 		String child1 = "";
 		String child2 = "";
 
-		//Create child 1
-		for(int i = 0; i < parent1.length(); i++){
-			if(i >= position){
-				child1 = child1 + child1Chars[i];
-			}
-			else{
-				child1 = child1 + child2Chars[i];
-			}
+		for (int i = 0; i < parent1.length(); i++) {
+			child1 += i >= position ? child1Chars[i] : child2Chars[i];
+			child2 += i >= position ? child2Chars[i] : child1Chars[i];
 		}
-		//Create child 2
-		for(int i = 0; i < parent2.length(); i++){
-			if(i >= position){
-				child2 = child2 + child2Chars[i];
-			}
-			else{
-				child2 = child2 + child1Chars[i];
-			}
-		}
-		Chromosome ch1 = new Chromosome();
-		ch1.setString(child1);
-		ch1.setScore(calculateFitness(child1));
-		newPopulation.add(ch1);
-		Chromosome ch2 = new Chromosome();
-		ch2.setString(child2);
-		ch2.setScore(calculateFitness(child2));
-		newPopulation.add(ch2);
+		
+		newPopulation.add(new Chromosome(child1, calculateFitness(child1)));
+		newPopulation.add(new Chromosome(child2, calculateFitness(child2)));
 	}
 
-
-	/**
-	 * Takes in 4 strings and calculates the string with the best score,
-	 * and returns it. 
-	 * 
-	 * @param ArrayList<Chromosome>
-	 * @return Chromosome 
-	 */
-	private static Chromosome fitnessFunction(ArrayList<Chromosome> randomFour){
+	private static Chromosome fitnessFunction(ArrayList<Chromosome> randomFour) {
 		int fitnessScore = 0;
 		int winnerPosition = 0;
-		for(int i = 0; i < randomFour.size(); i++){
+		for (int i = 0; i < randomFour.size(); i++) {
 			int winnerValue = 0;
 			String word = randomFour.get(i).getString();
 			char[] wordChar = word.toCharArray();
-			for(int j =0; j < word.length(); j++){
-				winnerValue = winnerValue + Math.abs(((int)wordChar[j]) - helloWorld[j]);
+			for (int j =0; j < word.length(); j++) {
+				winnerValue += Math.abs(((int)wordChar[j]) - helloWorld[j]);
 			}
-			if(i == 0){
+			if (i == 0) {
 				fitnessScore = winnerValue;
 			}
-			else if(winnerValue < fitnessScore){
+			else if (winnerValue < fitnessScore) {
 				winnerPosition = i;
 				fitnessScore = winnerValue;
 			}
@@ -204,92 +157,52 @@ public class genetic {
 		return randomFour.get(winnerPosition);
 	}
 	
-	/**
-	 * Works out the closest string to target from initial list
-	 * 
-	 * @return void
-	 */
-	private static void setStartState(){
-		for(int i = 0; i < POP_SIZE; i++){
-			int score = (population.get(i).getScore());
-			if(i == 0){
-				startHighest = score;
-				startHighestString = population.get(i).getString();
-			}else if(score < startHighest){
-				startHighest = score;
-				startHighestString = population.get(i).getString();
-			}
-		}
-	}
-
-	/**
-	 * This method will randomly mutate the array, with 5% of strings being
-	 * mutated by one character.
-	 * 
-	 * @return void
-	 */
-	private static void mutate(){
+	static void mutate(){
 		Random rand = new Random();
-		for(int i = 0; i < population.size(); i++){
+		for (Chromosome chromosome: population) {
 			int n = rand.nextInt((100 - 1) + 1) + 1;
-			if(n < 5){
-				String stringToMutate = population.get(i).getString();
+			if (n < 5) {
+				String stringToMutate = chromosome.getString();
 				int answer = rand.nextInt(stringToMutate.length());
-				int fiftyFifty = rand.nextInt(2);
 				char[] wordChar = stringToMutate.toCharArray();
 				int changedCharacter = 0;
-				if((int)wordChar[answer] == 32){
-					changedCharacter = (int)wordChar[answer] + 1;
+				if ((int) wordChar[answer] == 32) {
+					changedCharacter = (int) wordChar[answer] + 1;
 				}
-				else if((int)wordChar[answer] == 122){
-					changedCharacter = (int)wordChar[answer] - 1;
+				else if ((int)wordChar[answer] == 126) {
+					changedCharacter = (int) wordChar[answer] - 1;
 				}
-				else{
-					if(fiftyFifty == 0){
-						changedCharacter = (int)wordChar[answer] + 1;
-					}else{
-						changedCharacter = (int)wordChar[answer] - 1;
-					}
+				else {
+					changedCharacter = rand.nextInt(2) == 0 ? (int) wordChar[answer] + 1 : (int) wordChar[answer] - 1;
 				}
 
-				wordChar[answer] = (char)changedCharacter;
+				wordChar[answer] = (char) changedCharacter;
 				String mutatedString = "";
-				for(int j = 0; j < wordChar.length; j++){
+				for (int j = 0; j < wordChar.length; j++) {
 					mutatedString = mutatedString + wordChar[j];
 				}
-				population.get(i).setString(mutatedString);
+				chromosome.setString(mutatedString);
 			}
 		}
 	}
 }
 
-public class Chromosome {
+class Chromosome {
 
-	private String word = "";
-	private int score = 0;
-	public Chromosome(){
-		
-	}
-
-	public void makeString() {
-		for(int j = 0; j < 12; j++){
-			Random rand = new Random();
-			int n = rand.nextInt((122 - 32) + 1) + 32;
-			String s = (Character.toString((char)n));
-			word = word + s;
-		}
-	}
+	private String word;
+	private int score;
 	
+	public Chromosome(String word, int score){
+		this.word = word;
+		this.score = score;
+	}
+
 	public String getString(){
 		return word;
 	}
 	
 	public void setString(String word){
 		this.word = word;
-	}
-	
-	public void setScore(int score){
-		this.score = score;
 	}
 	
 	public int getScore(){

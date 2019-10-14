@@ -33,11 +33,6 @@
        public $string = [];
     }
 
-    /**
-     * Creates a random string
-     * 
-     * @return {Array <String>} characters (Chromosome string)
-     */
     function createString() {
         global $low;
         global $high;
@@ -49,30 +44,21 @@
         return $string;
     }
 
-    /**
-     * Creates the initial array of chromosomes
-     * 
-     * @return void
-     */
     function fillArray() {
-        global $POP_SIZE;
-        global $chromosomes;
+        global $chromosomes, $POP_SIZE, $startHighest, $startHighestString;
         for($i = 0; $i < $POP_SIZE; $i++) {
             $chrome = new Chromosome();
             $chrome->string = createString();
             $chrome->score = calculateFitness($chrome);
             $chromosomes[] = $chrome;
+            $score = $chromosomes[$i]->score;
+            if (($i == 0) || ($score < $startHighest)) {
+                $startHighest = $score;
+                $startHighestString = $chromosomes[$i]->string;
+            }
         }
     }
 
-    /**
-     * Takes in a character array and calculates how far away it is from
-     * the target string
-     * 
-     * @param {chromosome} chrome
-     * 
-     * @return {int} score
-     */
     function calculateFitness($chrome) {
         $score = 0;
         global $helloWorld;
@@ -83,11 +69,6 @@
         return $score;
     }
 
-    /**
-     * Checks each Chromosome to see if it matches the correct solution
-     * 
-     * @return boolean
-     */
     function checkSolution() {
         global $chromosomes, $POP_SIZE;
         for($i = 0; $i < $POP_SIZE; $i++){
@@ -98,31 +79,6 @@
         return false;
     }
 
-    /**
-     * Find the closest string to the goal from the initial population
-     * of chromosomes
-     * 
-     * @return void
-     */
-    function setStartState() {
-        global $chromosomes, $POP_SIZE, $startHighest, $startHighestString;
-        for ($i = 0; $i < $POP_SIZE; $i++) {
-            $score = $chromosomes[$i]->score;
-            if (($i == 0) || ($score < $startHighest)) {
-                $startHighest = $score;
-                $startHighestString = $chromosomes[$i]->string;
-            }
-        }
-    }
-
-    /**
-     * Crosses over 2 strings
-     * 
-     * @param {String} parent1
-     * @param {String} parent2
-     * 
-     * @return void
-     */
     function crossOver($parent1, $parent2) {
         global $newChromosomes;
         $rand = rand(0, sizeof($parent1)-1);
@@ -150,14 +106,6 @@
         $newChromosomes[] = $ch2;
     }
 
-    /**
-     * Take in an array of 4 chromosomes and returns the chromosome
-     * with the highest fitness score
-     * 
-     * @param {Array <Chromosomes>} randomFour
-     * 
-     * @return {Chromosomes}
-     */
     function fitnessFunction($randomFour) {
         $fitnessScore = 0;
         $winnerPosition = 0;
@@ -170,14 +118,6 @@
         return $randomFour[$winnerPosition];
     }
 
-    /**
-     * This function creates a new population based on the previous.
-     * It will take 4 random chromosomes from the population and pick the
-     * best 2. 70% of them will be added straight into the new population,
-     * with the further 30% crossed over.
-     * 
-     * @return void
-     */
     function createNewPopulation() {
         global $POP_SIZE, $chromosomes, $newChromosomes;
         $randomFour1 = [];
@@ -193,8 +133,7 @@
         $parent1 = fitnessFunction($randomFour1)->string;
         $parent2 = fitnessFunction($randomFour2)->string;
 
-        $n = rand(1, 100);
-        if ($n < 70) {
+        if (rand(1, 100) < 70) {
             crossOver($parent1, $parent2);
         } else {
             $ch1 = new Chromosome();
@@ -208,17 +147,10 @@
         }
     }
 
-    /**
-     * This function will loop through the array of chromosomes, and give
-     * them a 5% chance of mutating (that is one letter will change by 1)
-     * 
-     * @return void
-     */
     function mutate() {
         global $chromosomes, $low, $high, $POP_SIZE;
         for ($i = 0; $i < $POP_SIZE; $i++) {
-            $n = rand(1, 100);
-            if ($n < 5) {
+            if (rand(1, 100) < 5) {
                 $stringToMutate = $chromosomes[$i]->string;
                 $answer = rand(0, sizeof($stringToMutate)-1);
                 $fiftyFifty = rand(0, 1);
@@ -241,18 +173,11 @@
         }
     }
 
-    /**
-     * Main method to run the program
-     * 
-     * @return void
-     */
     function main() {
         global $chromosomes, $newChromosomes, $startHighest, $startHighestString, $POP_SIZE;
         echo '<div id="gaOutput">';
         $iteration = 0;
         fillArray();
-        setStartState();
-        // for($loop = 0; $loop < 10; $loop ++){
             while (!checkSolution()) {
             for ($i = 0; $i < $POP_SIZE/2; $i++) {
                 createNewPopulation();
@@ -273,7 +198,7 @@
                 $newChromosomes = [];
                 $iteration ++;
                 echo "<p><b>" . $iteration . "</b>.Best = " . $filteredString . ', <span style="color: red">' . $currentHighest . "</span> off target</p>";
-            } 
+            }
         }
         echo "<p>Hello, World! has been made</p>";
         echo "<p>Start string was " . implode($startHighestString) . ' (<span style="color: red">' . $startHighest . '</span> away from target)'. "</p>";
@@ -287,7 +212,17 @@
 <!-- Button to clear the output of the chromosomes -->
 <button onclick="clearDiv()">Clear</button>
 
-<!-- Active content stripped -->
+<script>
+/**
+    Clear the output.
+ */
+function clearDiv() {
+    var output = document.getElementById("gaOutput");
+    if(output !== null){
+        output.parentNode.removeChild(output);
+    }
+}
+</script>
 </body>
 
 

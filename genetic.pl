@@ -55,9 +55,8 @@ sub random {
 
 sub fillArray {   
     for( my $i = 0; $i < $POP_SIZE; $i = $i + 1 ) {
-        $chromosome = new Chromosome();
-        $chromosome->setString(createString());
-        $chromosome->setScore(calculateFitness($chromosome));
+        my $string = createString();
+        $chromosome = new Chromosome($string, calculateFitness($string));
         push @chromosomes, $chromosome;
     }
 }
@@ -73,8 +72,7 @@ sub createString {
 }
 
 sub calculateFitness {
-    my $chromosome = $_[0];
-    my $chromeString = $chromosome->getString();
+    my $chromeString = $_[0];
     my $score = 0;
     my @characters = split //, $chromeString;
     for($i = 0; $i < 13; $i = $i + 1){
@@ -100,7 +98,7 @@ sub setStartState {
         my $chromosome = $chromosomes[$i];
         my $score = $chromosome->getScore();
         my $chromeString = $chromosome->getString();
-        if (($i == 0) || $score < $startHighestScore) {
+        if ($i == 0 || $score < $startHighestScore) {
             $startHighestScore = $score;
             $startHighestString = $chromeString;
 
@@ -109,12 +107,12 @@ sub setStartState {
 }
 
 sub crossOver {
-    $child1 = "";
-    $child2 = "";
+    my $child1 = "";
+    my $child2 = "";
     @parent1 = split //, $_[0];
     @parent2 = split //, $_[1];
     my $n = scalar(@parent1);
-    $rand = random($n);
+    my $rand = random($n);
     for ($i = 0; $i < $n; $i++) {
         if($i >= $rand) {
             $child1 .= $parent1[$i];
@@ -124,13 +122,9 @@ sub crossOver {
             $child2 .= $parent1[$i];
         }
     }
-    $ch1 = new Chromosome();
-    $ch2 = new Chromosome();
-    $ch1->setString($child1);
-    $ch1->setScore(calculateFitness($ch1));
+    $ch1 = new Chromosome($child1, calculateFitness($child1));
+    $ch2 = new Chromosome($child2, calculateFitness($child2));
     push @newChromosomes, $ch1;
-    $ch2->setString($child2);
-    $ch2->setScore(calculateFitness($ch2));
     push @newChromosomes, $ch2;
 }
 
@@ -159,30 +153,23 @@ sub createNewPopulation {
         my $rand2 = random($POP_SIZE);
         push @randomFour2, $chromosomes[$rand2]; 
     }
-    $parent1Chrome = fitnessFunction(@randomFour1);
-    $parent2Chrome = fitnessFunction(@randomFour2);
-    $parent1 = $parent1Chrome->getString();
-    $parent2 = $parent2Chrome->getString();
-    $n = random(1, 100);
-    if ($n < 70){
+    my $parent1Chrome = fitnessFunction(@randomFour1);
+    my $parent2Chrome = fitnessFunction(@randomFour2);
+    my $parent1 = $parent1Chrome->getString();
+    my $parent2 = $parent2Chrome->getString();
+    if (random(1, 100) < 70){
         crossOver($parent1, $parent2);
     } else {
-        $ch1 = new Chromosome();
-        $ch2 = new Chromosome();
-        $ch1->setString($parent1);
-        $ch1->setScore(calculateFitness($ch1));
+        $ch1 = new Chromosome($parent1, calculateFitness($parent1));
+        $ch1 = new Chromosome($parent2, calculateFitness($parent2));
         push @newChromosomes, $ch1;
-        $ch2->setString($parent2);
-        $ch2->setScore(calculateFitness($ch2));
         push @newChromosomes, $ch2;
     }
-
 }
 
 sub mutate {
     for (my $i = 0; $i < $POP_SIZE; $i++) {
-        my $n = random(1, 100);
-        if ($n < 5) {
+        if (random(1, 100)< 5) {
             my $chromosome = $chromosomes[$j];
             my $stringToMutate = $chromosome->getString();
             my $fiftyFifty = random(2);
@@ -203,7 +190,7 @@ sub mutate {
             $characters[$answer] = chr($value);
             my $str = join("", @characters);
             $chromosome->setString($str);
-            $chromosome->setScore(calculateFitness($chromosome));
+            $chromosome->setScore(calculateFitness($str));
         }
     }
 }
@@ -224,7 +211,7 @@ sub main {
             my $chromosome = $chromosomes[$j];
             my $score = $chromosome->getScore();
             my $chromeString = $chromosome->getString();
-            if (($j == 0) || ($score < $currentHighest)) {
+            if ($j == 0 || $score < $currentHighest) {
                 $currentHighest = $score;
                 $highestString = $chromeString;
             }
