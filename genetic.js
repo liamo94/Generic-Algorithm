@@ -26,6 +26,10 @@ function Chromosome(string, score) {
     this.setCharacter = function(index, character) {
         this.string[index] = character;
     }
+
+    this.setScore = function(score) {
+        this.score = score;
+    }
 }
 
 function main() {
@@ -151,11 +155,12 @@ function fitnessFunction(randomFour) {
 }
 
 function mutate() {
+    let stringToMutate;
     for (let i = 0; i < chromosomes.length; i++) {
         if (random(1, 100) < 5) {
-            let StringToMutate = chromosomes[i].getString();
-            let answer = random(StringToMutate.length);
-            let chromosomeString = chromosomes[i].getString()[answer];
+            stringToMutate = chromosomes[i].getString();
+            let answer = random(stringToMutate.length);
+            let chromosomeString = stringToMutate[answer];
             let character = chromosomeString.charCodeAt(0);
             if (character == low) {
                 character ++;
@@ -165,6 +170,7 @@ function mutate() {
                 random(2) == 0 ? character ++ : character --;
             }
             chromosomes[i].setCharacter(answer, String.fromCharCode(character));
+            chromosomes[i].setScore(calculateFitness(chromosomes[i].getString()));
         }
     }
 }

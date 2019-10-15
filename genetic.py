@@ -121,6 +121,7 @@ def mutate():
                     value -= 1
             
             chromosomes[i].string[answer] = chr(value)
+            chromosomes[i].score = calculateFitness(chromosomes[i].string)
     return
 
 def main():

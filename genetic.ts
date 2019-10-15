@@ -18,6 +18,10 @@ class Chromosome {
     public setCharacter(index: number, character: string): void {
         this.string[index] = character;
     }
+
+    public setScore(score: number): void {
+        this.score = score;
+    }
 }
 
 class Main {
@@ -142,11 +146,12 @@ class Main {
     }
 
     private mutate(): void {
+        let stringToMutate;
         for (let i = 0; i < this.chromosomes.length; i++) {
             if (this.random(1, 100) < 5) {
-                let StringToMutate = this.chromosomes[i].getString();
-                let answer = this.random(StringToMutate.length);
-                let chromosomeString = this.chromosomes[i].getString()[answer];
+                stringToMutate = this.chromosomes[i].getString();
+                let answer = this.random(stringToMutate.length);
+                let chromosomeString = stringToMutate[answer];
                 let character = chromosomeString.charCodeAt(0);
                 if (character == this.low) {
                     character++;
@@ -156,6 +161,7 @@ class Main {
                     this.random(2) == 0 ? character++ : character--;
                 }
                 this.chromosomes[i].setCharacter(answer, String.fromCharCode(character));
+                this.chromosomes[i].setScore(this.calculateFitness(this.chromosomes[i].getString()));
             }
         }
     }

@@ -22,6 +22,9 @@ class Chromosome
     def setString=(string)
         @string = string
     end
+    def setScore=(score)
+        @score = score
+    end
 
     def getScore
         @score
@@ -134,7 +137,7 @@ def mutate()
             stringToMutate = $chromosomes[i].getString
             answer = Random.rand(0..(stringToMutate.length - 1))
             fiftyFifty = Random.rand(0..1)
-            chromosomeChar = $chromosomes[i].getString[answer]
+            chromosomeChar = stringToMutate[answer]
             value = chromosomeChar.ord
             if (value == $low)
                 value += 1
@@ -147,7 +150,9 @@ def mutate()
                     value -= 1
                 end
             end
-            $chromosomes[i].getString[answer] = value.chr
+            stringToMutate[answer] = value.chr
+            $chromosomes[i].setString= stringToMutate
+            $chromosomes[i].setScore = calculateFitness(stringToMutate)
         end
     end
 end
@@ -157,7 +162,6 @@ def main()
     setStartState()
     while (!checkSolution())
         for i in 0..($POP_SIZE-1)/2
-            puts $chromosomes.length
             createNewPopulation()
         end
         currentHighest = 0

@@ -202,6 +202,7 @@ void mutate() {
             }
             char newValue = value;
             chromosomes[i].string[answer] = newValue;
+            chromosomes[i].score = calculateFitness(chromosomes[i]);
         }
     }
 }

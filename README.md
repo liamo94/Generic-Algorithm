@@ -11,12 +11,12 @@ Generic Algorithm (evolution) written in numerous coding languages:
   * Perl
   * PHP
   * Python
+  * Swift
   * Typescript
   
 __ONGOING__
    * C
    * Kotlin
-   * Swift
    
  __Pseudocode:__
   ```
