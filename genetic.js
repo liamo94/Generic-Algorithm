@@ -1,7 +1,7 @@
 //high, low - the range of decimal ASCII codes for characters
 let low =32;
 let high = 126;
-let POP_SIZE = 100000;
+let POP_SIZE = 100;
 let chromosomes= [];
 let newChromosomes = [];
 let startHighest = 0;
@@ -36,7 +36,7 @@ function main() {
         }
         let currentHighest = 0;
         let highestString = '';
-        for (let i = 0; i < POP_SIZE; i++) {
+        for (let i = 0; i < POP_SIZE/2; i++) {
             let score = chromosomes[i].getScore();
             if (i == 0 || score < currentHighest) {
                 currentHighest = score;
@@ -70,8 +70,8 @@ function fillArray() {
     let string, score;
     for (let i = 0; i < POP_SIZE; i++) {
         string = createString();
-        chromosomes.push(new Chromosome(string, calculateFitness(string)));
         score = calculateFitness(string);
+        chromosomes.push(new Chromosome(string, score));
         if (i == 0 || score < startHighest) {
             startHighest = score;
             startHighestString = chromosomes[i].getString();
@@ -158,11 +158,11 @@ function mutate() {
             let chromosomeString = chromosomes[i].getString()[answer];
             let character = chromosomeString.charCodeAt(0);
             if (character == low) {
-                character += 1;
+                character ++;
             } else if (character == high) {
-                character -= 1;
+                character --;
             } else {
-                random(2) == 0 ? character += 1 : character -= 1;
+                random(2) == 0 ? character ++ : character --;
             }
             chromosomes[i].setCharacter(answer, String.fromCharCode(character));
         }

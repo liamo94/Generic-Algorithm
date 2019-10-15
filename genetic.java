@@ -18,7 +18,7 @@ public class ga {
 		int iteration = 0;
 		
 		while (!checkSolution()) {
-			for (int i = 0; i < POP_SIZE; i++) {
+			for (int i = 0; i < POP_SIZE/2; i++) {
 				createNewPopulation();
 			}
 			int currentHighest = 0;
@@ -167,13 +167,13 @@ public class ga {
 				char[] wordChar = stringToMutate.toCharArray();
 				int changedCharacter = 0;
 				if ((int) wordChar[answer] == 32) {
-					changedCharacter = (int) wordChar[answer] + 1;
+					changedCharacter = (int) wordChar[answer]++;
 				}
 				else if ((int)wordChar[answer] == 126) {
-					changedCharacter = (int) wordChar[answer] - 1;
+					changedCharacter = (int) wordChar[answer]--;
 				}
 				else {
-					changedCharacter = rand.nextInt(2) == 0 ? (int) wordChar[answer] + 1 : (int) wordChar[answer] - 1;
+					changedCharacter = rand.nextInt(2) == 0 ? (int) wordChar[answer]++ : (int) wordChar[answer]--;
 				}
 
 				wordChar[answer] = (char) changedCharacter;
@@ -182,6 +182,7 @@ public class ga {
 					mutatedString = mutatedString + wordChar[j];
 				}
 				chromosome.setString(mutatedString);
+				chromosome.setScore(calculateFitness(mutatedString));
 			}
 		}
 	}
@@ -203,6 +204,10 @@ class Chromosome {
 	
 	public void setString(String word){
 		this.word = word;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
 	}
 	
 	public int getScore(){

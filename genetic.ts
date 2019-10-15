@@ -35,7 +35,7 @@ class Main {
     public run() {
         this.fillArray();
         while (!this.checkSolution()) {
-            for (let i = 0; i < this.POP_SIZE; i++) {
+            for (let i = 0; i < this.POP_SIZE/2; i++) {
                 this.createNewPopulation();
             }
             let currentHighest = 0;
@@ -73,8 +73,8 @@ class Main {
         let string, score;
         for (let i = 0; i < this.POP_SIZE; i++) {
             string = this.createString();
-            this.chromosomes.push(new Chromosome(string, this.calculateFitness(string)));
             score = this.calculateFitness(string);
+            this.chromosomes.push(new Chromosome(string, score));
             if (i == 0 || score < this.startHighest) {
                 this.startHighest = score;
                 this.startHighestString = this.chromosomes[i].getString();
@@ -149,11 +149,11 @@ class Main {
                 let chromosomeString = this.chromosomes[i].getString()[answer];
                 let character = chromosomeString.charCodeAt(0);
                 if (character == this.low) {
-                    character += 1;
+                    character++;
                 } else if (character == this.high) {
-                    character -= 1;
+                    character--;
                 } else {
-                    this.random(2) == 0 ? character += 1 : character -= 1;
+                    this.random(2) == 0 ? character++ : character--;
                 }
                 this.chromosomes[i].setCharacter(answer, String.fromCharCode(character));
             }

@@ -4,6 +4,7 @@ Generic Algorithm (evolution) written in numerous coding languages:
   __DONE__
   * C++
   * C#
+  * Go
   * Java
   * JavaScipt
   * Ruby
@@ -14,9 +15,8 @@ Generic Algorithm (evolution) written in numerous coding languages:
   
 __ONGOING__
    * C
-   * Swift
-   * Go
    * Kotlin
+   * Swift
    
  __Pseudocode:__
   ```

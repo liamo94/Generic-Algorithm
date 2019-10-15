@@ -189,15 +189,15 @@ void mutate() {
             int changedCharacter = 0;
             int value = chromosomeString;
             if (value == HIGH) {
-                value += 1;
+                value++;
             } else if (value == LOW) {
-                value -= 1;
+                value--;
             }
             else {
                 if (fiftyFifty == 0) {
-                    value += 1;
+                    value++;
                 } else {
-                    value -= 1;
+                    value--;
                 }
             }
             char newValue = value;

@@ -156,7 +156,8 @@ def main()
     fillArray()
     setStartState()
     while (!checkSolution())
-        for i in 0..$POP_SIZE-1
+        for i in 0..($POP_SIZE-1)/2
+            puts $chromosomes.length
             createNewPopulation()
         end
         currentHighest = 0
