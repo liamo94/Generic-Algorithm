@@ -8,7 +8,6 @@ class Chromosome {
         self.score = score
         self.string = string
     }
-    
 }
 
 let low = 32
@@ -47,7 +46,6 @@ func fillArray() {
             startHighestString = chromosome.string
         }
     }
-
 }
 
 func calculateFitness(string: String) -> Int {
@@ -57,7 +55,6 @@ func calculateFitness(string: String) -> Int {
         let value = helloWorld[i]
         score = score + abs(Int(stringToCheck[i].asciiValue!) - value)
     }
-
     return score
 }
 
