@@ -19,12 +19,12 @@ namespace GeneticAlgorithm {
             fillArray();
 			int iteration = 0;
             while (!checkSolution()) {
-                for (int i = 0; i < POP_SIZE / 2; i++) {
-                	createNewPopulation();
-                }
                 int currentHighest = 0;
                 string highestString = "";
                 for (int i = 0; i < POP_SIZE; i++) {
+                    if (i < POP_SIZE)/2 {
+                        createNewPopulation();
+                    }
                 	int score = population[i].getScore();
                 	if (i == 0 || score < currentHighest) {
                 		currentHighest = score;

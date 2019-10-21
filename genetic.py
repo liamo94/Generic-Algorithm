@@ -130,11 +130,11 @@ def main():
     global iteration
     fillArray()
     while(not checkSolution()):
-        for i in range (0, POP_SIZE):
-            createNewPopulation()
         currentHighest = 0
         highestString = ''
         for i in range(0, POP_SIZE):
+            if(i < POP_SIZE/2):
+                createNewPopulation()
             score = chromosomes[i].score
             if((i == 0) or (score < currentHighest)):
                 currentHighest = score
@@ -146,7 +146,7 @@ def main():
             newChromosomes = []
             iteration += 1
     print('Hello, World has been made')
-    print'Start string was ' + constructString(startHighestString) + ' (', startHighest, ' away from target)'
+    print 'Start string was ' + constructString(startHighestString) + ' (', startHighest, ' away from target)'
     return
 
 main()

@@ -179,12 +179,12 @@
         $iteration = 0;
         fillArray();
             while (!checkSolution()) {
-            for ($i = 0; $i < $POP_SIZE/2; $i++) {
-                createNewPopulation();
-            }
             $currentHighest = 0;
             $highestString = "";
             for ($i = 0; $i < $POP_SIZE; $i++) {
+                if ($i < $POP_SIZE/2) {
+                    createNewPopulation();
+                }
                 $score = $chromosomes[$i]->score;
                 if (($i == 0) || $score < $currentHighest) {
                     $currentHighest = $score;

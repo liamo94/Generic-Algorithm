@@ -31,12 +31,12 @@ func main() {
 	fmt.Println("Genetic algorithm")
 	fillArray()
 	for true {
-		for i := 0; i < popSize/2; i++ {
-			createNewPopulation()
-		}
 		currentHighest := 0
 		highestString := ""
 		for i := 0; i < popSize; i++ {
+			if i < popSize/2 {
+				createNewPopulation()
+			}
 			if i == 0 || chromosomes[i].score < currentHighest {
 				currentHighest = chromosomes[i].score
 				highestString = chromosomes[i].chromeString

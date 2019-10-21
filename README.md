@@ -1,22 +1,19 @@
 # Generic-Algorithm
 Generic Algorithm (evolution) written in numerous coding languages:
 
-  __DONE__
+  __LANGUAGES__
   * C++
   * C#
   * Go
   * Java
   * JavaScipt
+  * Kotlin
   * Ruby
   * Perl
   * PHP
   * Python
   * Swift
   * Typescript
-  
-__ONGOING__
-   * C
-   * Kotlin
    
  __Pseudocode:__
   ```

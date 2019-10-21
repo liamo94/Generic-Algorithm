@@ -201,17 +201,16 @@ sub main {
     setStartState();
    
     while (checkSolution() == 0){
-        for(my $i = 0; $i < $POP_SIZE/2; $i++){
-            createNewPopulation();
-            #print "$i \n";
-        }
         $currentHighest = 0;
         $highestString = "";
-        for (my $j = 0; $j < $POP_SIZE/2; $j++) {
-            my $chromosome = $chromosomes[$j];
+        for (my $i = 0; $i < $POP_SIZE; $i++) {
+            if ($i < $POP_SIZE/2) {
+                createNewPopulation();
+            }
+            my $chromosome = $chromosomes[$i];
             my $score = $chromosome->getScore();
             my $chromeString = $chromosome->getString();
-            if ($j == 0 || $score < $currentHighest) {
+            if ($i == 0 || $score < $currentHighest) {
                 $currentHighest = $score;
                 $highestString = $chromeString;
             }

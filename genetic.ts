@@ -39,12 +39,12 @@ class Main {
     public run() {
         this.fillArray();
         while (!this.checkSolution()) {
-            for (let i = 0; i < this.POP_SIZE/2; i++) {
-                this.createNewPopulation();
-            }
             let currentHighest = 0;
             let highestString = '';
             for (let i = 0; i < this.POP_SIZE; i++) {
+                if (i < this.POP_SIZE) {
+                    this.createNewPopulation();
+                }
                 let score = this.chromosomes[i].getScore();
                 if (i == 0 || score < currentHighest) {
                     currentHighest = score;

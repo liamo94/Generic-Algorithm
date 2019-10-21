@@ -161,12 +161,12 @@ def main()
     fillArray()
     setStartState()
     while (!checkSolution())
-        for i in 0..($POP_SIZE-1)/2
-            createNewPopulation()
-        end
         currentHighest = 0
         highestString = ''
         for i in 0..$POP_SIZE-1
+            if (i < $POP_SIZE/2) 
+                createNewPopulation()
+            end
             score = $chromosomes[i].getScore
             if((i == 0) || (score < currentHighest))
                 currentHighest = score

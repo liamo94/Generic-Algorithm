@@ -153,7 +153,9 @@ func main() {
     var currentHighest = 0
     var highestString = ""
         for i in 0...POP_SIZE-1 {
+            if (i < POP_SIZE/2) {
             createNewPopulation()
+            }
             if i == 0 || chromosomes[i].score < currentHighest {
                 currentHighest = chromosomes[i].score
                 highestString = chromosomes[i].string

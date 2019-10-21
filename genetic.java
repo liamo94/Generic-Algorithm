@@ -3,9 +3,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class ga {
+public class Genetic {
 
 	private final static int POP_SIZE = 100;
+	private final static int HIGH = 126;
+	private final static int LOW = 32;
 	private final static int[] helloWorld = {72, 101, 108, 108, 111, 44, 32, 87, 111, 114, 108, 100, 33};
 	private static List<Chromosome> population = new ArrayList<>();
 	private static List<Chromosome> newPopulation = new ArrayList<>();
@@ -18,17 +20,12 @@ public class ga {
 		int iteration = 0;
 		
 		while (!checkSolution()) {
-			for (int i = 0; i < POP_SIZE/2; i++) {
-				createNewPopulation();
-			}
 			int currentHighest = 0;
 			String highestString = "";
 			for (int i = 0; i < POP_SIZE; i++) {
+				createNewPopulation();
 				int score = population.get(i).getScore();
-				if (i == 0) {
-					currentHighest = score;
-					highestString = population.get(i).getString();
-				} else if (score < currentHighest) {
+				if (i == 0 || score < currentHighest) {
 					currentHighest = score;
 					highestString = population.get(i).getString();
 				}
@@ -40,8 +37,8 @@ public class ga {
 				newPopulation.clear();
 				iteration++;
 			}
-
 		}
+		
 		System.out.println("\nHello World! has been made\n");
 		System.out.printf("Start string was %s (%d away from target)\n", startHighestString, startHighest);
 	}
@@ -87,14 +84,14 @@ public class ga {
 	}
 	
 	private static String makeString() {
-		String word = "";
+		StringBuilder word = new StringBuilder();
 		for (int j = 0; j < 12; j++) {
 			Random rand = new Random();
-			int n = rand.nextInt((122 - 32) + 1) + 32;
-			String s = (Character.toString((char)n));
-			word = word + s;
+			int n = rand.nextInt((HIGH - LOW) + 1) + LOW;
+			char s = (char) n;
+			word.append(s);
 		}
-		return word;
+		return word.toString();
 	}
 
 	private static void createNewPopulation() {
@@ -124,16 +121,16 @@ public class ga {
 		int position = rand.nextInt(parent1.length());
 		char[] child1Chars = parent1.toCharArray();
 		char[] child2Chars = parent2.toCharArray();
-		String child1 = "";
-		String child2 = "";
+		StringBuilder child1 = new StringBuilder();
+		StringBuilder child2 = new StringBuilder();
 
 		for (int i = 0; i < parent1.length(); i++) {
-			child1 += i >= position ? child1Chars[i] : child2Chars[i];
-			child2 += i >= position ? child2Chars[i] : child1Chars[i];
+			child1.append(i >= position ? child1Chars[i] : child2Chars[i]);
+			child2.append(i >= position ? child2Chars[i] : child1Chars[i]);
 		}
 		
-		newPopulation.add(new Chromosome(child1, calculateFitness(child1)));
-		newPopulation.add(new Chromosome(child2, calculateFitness(child2)));
+		newPopulation.add(new Chromosome(child1.toString(), calculateFitness(child1.toString())));
+		newPopulation.add(new Chromosome(child2.toString(), calculateFitness(child2.toString())));
 	}
 
 	private static Chromosome fitnessFunction(ArrayList<Chromosome> randomFour) {
@@ -166,14 +163,14 @@ public class ga {
 				int answer = rand.nextInt(stringToMutate.length());
 				char[] wordChar = stringToMutate.toCharArray();
 				int changedCharacter = 0;
-				if ((int) wordChar[answer] == 32) {
-					changedCharacter = (int) wordChar[answer]++;
+				if ((int) wordChar[answer] == LOW) {
+					changedCharacter = (int) wordChar[answer] + 1;
 				}
-				else if ((int)wordChar[answer] == 126) {
-					changedCharacter = (int) wordChar[answer]--;
+				else if ((int)wordChar[answer] == HIGH) {
+					changedCharacter = (int) wordChar[answer] - 1;
 				}
 				else {
-					changedCharacter = rand.nextInt(2) == 0 ? (int) wordChar[answer]++ : (int) wordChar[answer]--;
+					changedCharacter = rand.nextInt(2) == 0 ? (int) wordChar[answer] + 1 : (int) wordChar[answer] - 1;
 				}
 
 				wordChar[answer] = (char) changedCharacter;
@@ -205,8 +202,8 @@ class Chromosome {
 	public void setString(String word){
 		this.word = word;
 	}
-
-	public void setScore(int score) {
+	
+	public void setScore(int score){
 		this.score = score;
 	}
 	

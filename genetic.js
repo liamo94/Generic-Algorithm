@@ -35,12 +35,12 @@ function Chromosome(string, score) {
 function main() {
     fillArray();
     while (!checkSolution()) {
-        for (let i = 0; i < POP_SIZE; i++) {
-            createNewPopulation();
-        }
         let currentHighest = 0;
         let highestString = '';
-        for (let i = 0; i < POP_SIZE/2; i++) {
+        for (let i = 0; i < POP_SIZE; i++) {
+            if (i < POP_SIZE/2) {
+                createNewPopulation();
+            }
             let score = chromosomes[i].getScore();
             if (i == 0 || score < currentHighest) {
                 currentHighest = score;
