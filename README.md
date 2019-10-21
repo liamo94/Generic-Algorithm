@@ -31,7 +31,7 @@ This project was a challenge I set myself to write the same piece of code over a
 
 Compairson of performance**
 
-| Language | Lines of code| Avg Permutations | Avg Time (ms) | Ratio permuations:time |
+| Language | Lines of code| Avg Permutations | Avg Time (ms) | Permuations per ms |
 | ------------- |:-------------:|:-------------:|:-------------:|:-------------:|
 | C++ ~     | 245 | 522 | 5,389 | 0.10 |
 | C# ~      | 197| 256 | 120 | 2.13 |
