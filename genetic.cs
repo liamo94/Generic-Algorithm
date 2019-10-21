@@ -43,11 +43,6 @@ namespace GeneticAlgorithm {
             Console.WriteLine("Start string was " + startHighestString + " (" + startHighest + " away from target)");
         }
 
-        /*
-         * Creates an array of Chromosomes
-         * 
-         * @return void
-         */
         private static void fillArray() {
             int score = 0;
             string chString;
@@ -62,6 +57,7 @@ namespace GeneticAlgorithm {
                 }
             }
         }
+
         private static string makeString() {
             string chString = "";
             for (int i = 0; i < 13; i++) {
@@ -192,6 +188,5 @@ namespace GeneticAlgorithm {
         public void setScore(int score) {
             this.score = score;
         }
-
     }
 }

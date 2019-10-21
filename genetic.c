@@ -12,9 +12,6 @@ const int helloWorldSize = sizeof(helloWorld)/sizeof(*helloWorld);
 char *chromosomeStrings [POP_SIZE];
 char *newChromosomeStrings [POP_SIZE];
 
-/**
- * Function to create a random number
- * */
 int getRandom(int min, int max) {
     int r = rand() % (max - min) + min;
     return r;
@@ -26,7 +23,6 @@ char *createString() {
         char charToAdd = getRandom(LOW, HIGH);
         randomString[i] = charToAdd;
     }
-    // Add null terminating string
     randomString[helloWorldSize] = '\0';
     return strdup(randomString);
 }

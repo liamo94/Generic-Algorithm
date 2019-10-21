@@ -23,7 +23,9 @@ public class Genetic {
 			int currentHighest = 0;
 			String highestString = "";
 			for (int i = 0; i < POP_SIZE; i++) {
-				createNewPopulation();
+				if(i < POP_SIZE/2) {
+					createNewPopulation();
+				}
 				int score = population.get(i).getScore();
 				if (i == 0 || score < currentHighest) {
 					currentHighest = score;
