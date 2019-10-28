@@ -8,7 +8,7 @@ public class Genetic {
 	private final static int POP_SIZE = 100;
 	private final static int HIGH = 126;
 	private final static int LOW = 32;
-	private final static int[] helloWorld = {72, 101, 108, 108, 111, 44, 32, 87, 111, 114, 108, 100, 33};
+	private final static int[] helloWorld = { 72, 101, 108, 108, 111, 44, 32, 87, 111, 114, 108, 100, 33 };
 	private static List<Chromosome> population = new ArrayList<>();
 	private static List<Chromosome> newPopulation = new ArrayList<>();
 	private static int startHighest = 0;
@@ -18,12 +18,12 @@ public class Genetic {
 		System.out.println("Trying to make \"Hello World!\" ...\n");
 		fillArray();
 		int iteration = 0;
-		
+
 		while (!checkSolution()) {
 			int currentHighest = 0;
 			String highestString = "";
 			for (int i = 0; i < POP_SIZE; i++) {
-				if(i < POP_SIZE/2) {
+				if (i < POP_SIZE / 2) {
 					createNewPopulation();
 				}
 				int score = population.get(i).getScore();
@@ -40,7 +40,7 @@ public class Genetic {
 				iteration++;
 			}
 		}
-		
+
 		System.out.println("\nHello World! has been made\n");
 		System.out.printf("Start string was %s (%d away from target)\n", startHighestString, startHighest);
 	}
@@ -60,11 +60,11 @@ public class Genetic {
 			}
 		}
 	}
-	
+
 	private static List<Chromosome> clone(List<Chromosome> original) {
-	    List<Chromosome> copy = new ArrayList<>();
-	    copy.addAll(original);
-	    return copy;
+		List<Chromosome> copy = new ArrayList<>();
+		copy.addAll(original);
+		return copy;
 	}
 
 	private static int calculateFitness(String check) {
@@ -77,14 +77,14 @@ public class Genetic {
 	}
 
 	private static boolean checkSolution() {
-		for (Chromosome chromsome: population) {
+		for (Chromosome chromsome : population) {
 			if (chromsome.getScore() == 0) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	private static String makeString() {
 		StringBuilder word = new StringBuilder();
 		for (int j = 0; j < 12; j++) {
@@ -105,7 +105,7 @@ public class Genetic {
 			randomFour1.add(population.get(rand.nextInt(POP_SIZE)));
 			randomFour2.add(population.get(rand.nextInt(POP_SIZE)));
 		}
-		
+
 		String parent1 = fitnessFunction(randomFour1).getString();
 		String parent2 = fitnessFunction(randomFour2).getString();
 
@@ -130,7 +130,7 @@ public class Genetic {
 			child1.append(i >= position ? child1Chars[i] : child2Chars[i]);
 			child2.append(i >= position ? child2Chars[i] : child1Chars[i]);
 		}
-		
+
 		newPopulation.add(new Chromosome(child1.toString(), calculateFitness(child1.toString())));
 		newPopulation.add(new Chromosome(child2.toString(), calculateFitness(child2.toString())));
 	}
@@ -142,23 +142,22 @@ public class Genetic {
 			int winnerValue = 0;
 			String word = randomFour.get(i).getString();
 			char[] wordChar = word.toCharArray();
-			for (int j =0; j < word.length(); j++) {
-				winnerValue += Math.abs(((int)wordChar[j]) - helloWorld[j]);
+			for (int j = 0; j < word.length(); j++) {
+				winnerValue += Math.abs(((int) wordChar[j]) - helloWorld[j]);
 			}
 			if (i == 0) {
 				fitnessScore = winnerValue;
-			}
-			else if (winnerValue < fitnessScore) {
+			} else if (winnerValue < fitnessScore) {
 				winnerPosition = i;
 				fitnessScore = winnerValue;
 			}
 		}
 		return randomFour.get(winnerPosition);
 	}
-	
-	static void mutate(){
+
+	static void mutate() {
 		Random rand = new Random();
-		for (Chromosome chromosome: population) {
+		for (Chromosome chromosome : population) {
 			int n = rand.nextInt((100 - 1) + 1) + 1;
 			if (n < 5) {
 				String stringToMutate = chromosome.getString();
@@ -167,11 +166,9 @@ public class Genetic {
 				int changedCharacter = 0;
 				if ((int) wordChar[answer] == LOW) {
 					changedCharacter = (int) wordChar[answer] + 1;
-				}
-				else if ((int)wordChar[answer] == HIGH) {
+				} else if ((int) wordChar[answer] == HIGH) {
 					changedCharacter = (int) wordChar[answer] - 1;
-				}
-				else {
+				} else {
 					changedCharacter = rand.nextInt(2) == 0 ? (int) wordChar[answer] + 1 : (int) wordChar[answer] - 1;
 				}
 
@@ -191,25 +188,25 @@ class Chromosome {
 
 	private String word;
 	private int score;
-	
-	public Chromosome(String word, int score){
+
+	public Chromosome(String word, int score) {
 		this.word = word;
 		this.score = score;
 	}
 
-	public String getString(){
+	public String getString() {
 		return word;
 	}
-	
-	public void setString(String word){
+
+	public void setString(String word) {
 		this.word = word;
 	}
-	
-	public void setScore(int score){
+
+	public void setScore(int score) {
 		this.score = score;
 	}
-	
-	public int getScore(){
+
+	public int getScore() {
 		return score;
 	}
 }

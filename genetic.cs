@@ -17,7 +17,7 @@ namespace GeneticAlgorithm {
 
         public static void Main(string[] args) {
             fillArray();
-			int iteration = 0;
+            int iteration = 0;
             while (!checkSolution()) {
                 int currentHighest = 0;
                 string highestString = "";
@@ -25,11 +25,11 @@ namespace GeneticAlgorithm {
                     if (i < POP_SIZE)/2 {
                         createNewPopulation();
                     }
-                	int score = population[i].getScore();
-                	if (i == 0 || score < currentHighest) {
-                		currentHighest = score;
-                		highestString = population[i].getString();
-                	}
+                    int score = population[i].getScore();
+                    if (i == 0 || score < currentHighest) {
+                        currentHighest = score;
+                        highestString = population[i].getString();
+                    }
                 }
                     if (!checkSolution()) {
                         population = new List<Chromosome>(newPopulation);
@@ -39,7 +39,7 @@ namespace GeneticAlgorithm {
                         iteration++;
                     }
             }
-			Console.WriteLine("\nHello, World! has been made");
+            Console.WriteLine("\nHello, World! has been made");
             Console.WriteLine("Start string was " + startHighestString + " (" + startHighest + " away from target)");
         }
 
@@ -80,7 +80,7 @@ namespace GeneticAlgorithm {
         private static Boolean checkSolution() {
             for (int i = 0; i < POP_SIZE; i++) {
                 if (population[i].getScore() == 0) {
-					return true;
+                    return true;
                 }
             }
             return false;
