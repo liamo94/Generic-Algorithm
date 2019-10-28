@@ -60,4 +60,4 @@ The code was ran 10 times using a pool of 100 strings and the average time taken
 
 ±Ran in browser
 
-(Note: Lines of code has comments and white spaces removed from comparison
+Note: Lines of code has comments and white spaces removed from comparison
