@@ -51,6 +51,7 @@ The code was ran _10 times using a pool of 100 strings and a 5% chance of mutati
 | Python ~ | 128 | 223 | 438 | 0.51 |
 | Swift ~ | 159 | 77 | 178 | 0.43 |
 | TypeScript ^ | 172 | 134 | 115 | 1.17 |
+| `Average` | **175** | **316** | **1,326** | **1.28** |
 
 +Compiled and ran as jar
 
