@@ -35,7 +35,7 @@ The rule I set myself was line by line I had to make the algorithms as similar a
 
 __Compairson of performance__
 
-The code was ran 10 times using a pool of 100 strings and the average time taken. Times are not meant to be a comparison of which language is better, rather a reference (e.g PHP was ran in a browser which would have been slower and I am not as strong with procedural languages like C++)
+The code was ran '`10 times using a pool of 100 strings and a 5% chance of mutation`, with and the average time taken. Times are not meant to be a comparison of which language is better, rather a reference (e.g PHP was ran in a browser which would have been slower and I am not as strong with procedural languages like C++)
 
 | Language | Lines of code| Avg Permutations | Avg Time (ms) | Permuations per ms |
 | ------------- |:-------------:|:-------------:|:-------------:|:-------------:|
