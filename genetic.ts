@@ -93,15 +93,7 @@ class Main {
         }
         return score;
     }
-
-    private constructString(arr): string {
-        let string = '';
-        arr.forEach(char => {
-            string = string + char;
-        });
-        return string;
-    }
-
+    
     private checkSolution(): boolean {
         for (let i =0; i < this.POP_SIZE; i++) {
             if (this.chromosomes[i].getScore() === 0) {
@@ -167,15 +159,9 @@ class Main {
     }
 
     private fitnessFunction(randomFour): Chromosome {
-        let fitnessScore = 0;
-        let winnerPosition = 0;
-        for (let i = 0; i < randomFour.length; i++) {
-            if (i == 0 || randomFour[i].score < fitnessScore) {
-                winnerPosition = i;
-                fitnessScore = randomFour[i].getScore();
-            }
-        }
-        return randomFour[winnerPosition];
+        return randomFour.reduce((accumulator, currentValue) => {
+            return accumulator.getScore() < currentValue.getScore() ? accumulator : currentValue;
+        }, randomFour[0]);
     }
 
     private random(x: any, y?: number): any {
