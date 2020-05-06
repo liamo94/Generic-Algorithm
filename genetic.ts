@@ -25,16 +25,16 @@ class Chromosome {
 }
 
 class Main {
-    readonly low: number = 32;
-    readonly high: number = 126;
-    readonly POP_SIZE: number = 100;
+    readonly low = 32;
+    readonly high = 126;
+    readonly POP_SIZE = 100;
     private chromosomes: Chromosome[] = [];
     private newChromosomes: Chromosome[] = [];
-    private startHighest: number = 0;
+    private startHighest = 0;
     private startHighestString: string[];
 
-    private iteration: number = 0;
-    readonly helloWorld: number[] = [72, 101, 108, 108, 111, 44, 32, 87, 111, 114, 108, 100, 33];
+    private iteration = 0;
+    readonly helloWorld = [72, 101, 108, 108, 111, 44, 32, 87, 111, 114, 108, 100, 33];
 
     public run() {
         this.fillArray();
@@ -74,7 +74,8 @@ class Main {
     }
 
     private fillArray(): void {
-        let string, score;
+        let string = []; 
+        let score = 0;
         for (let i = 0; i < this.POP_SIZE; i++) {
             string = this.createString();
             score = this.calculateFitness(string);
@@ -93,7 +94,7 @@ class Main {
         }
         return score;
     }
-    
+
     private checkSolution(): boolean {
         for (let i =0; i < this.POP_SIZE; i++) {
             if (this.chromosomes[i].getScore() === 0) {
